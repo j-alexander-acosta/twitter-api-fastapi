@@ -1,12 +1,13 @@
 # Python
 from uuid import UUID
 from datetime import date
+from datetime import datetime
 from typing import Optional
 
 # Pydantic
 from pydantic import BaseModel
 from pydantic import EmailStr
-from pydantic import Fiel
+from pydantic import Field
 
 # FastAPI
 from fastapi import FastAPI
@@ -26,8 +27,8 @@ class UserLogin(UserBase):
         max_length=64
     )
 
-class User(BaseModel):
-        first_name: str = Field(
+class User(UserBase):
+    first_name: str = Field(
         ...,
         min_lenght=1,
         max_length=50
@@ -37,10 +38,18 @@ class User(BaseModel):
         min_lenght=1,
         max_length=50
     )
-    birth_date: str = Optional[date] = Field(default=None)
+    birth_date: Optional[date] = Field(default=None)
 
-class tweet(BaseModel):
-    pass
+class Tweet(BaseModel):
+    tweet_id: UUID = Field(...)
+    content:str = Field(
+        ...,
+        min_length=1,
+        max_length=256
+    )
+    created_at: date = Field(default=datetime.now())
+    update_at: Optional[datetime] = Field(default=None)
+    by: User = Field(...)
 
 @app.get(path="/")
 def home():
